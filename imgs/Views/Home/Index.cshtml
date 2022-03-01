@@ -1,0 +1,121 @@
+﻿@model imgs.Models.image
+@using imgs.Models
+@{
+    ViewBag.Title = "Home Page";
+    var message = TempData["msg"] ?? string.Empty;
+
+}
+<script type="text/javascript">
+      var message = '@message';
+    if (message == "1")
+        alert("Record Save Successfully!");
+    else if (message == "update")
+        alert("Record already Exists !");
+        else if (message == "3")
+                alert("Update here ::");
+
+    function Delete(sid)
+    {
+        var result=confirm("DO U Want Delete are not :");
+        if(result)
+        {
+            $.ajax(
+                {
+                    url: "@Url.Action("Delete","Home")",
+                    type: 'post',
+                    datatype: 'json',
+                    data: { sid: sid },
+                    asycs: false,
+                    success:function(isConfirm)
+                        {
+                        alert('Your recored detele here :'); location.reload();
+                    }
+
+
+                });
+        }
+    }
+</script>
+
+<main>
+@using (Html.BeginForm("Index", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m =>m.id, new { @id = "id" })
+    @Html.HiddenFor(m => m.Imagepath, new { @id = "Imagepath" })
+
+    <section class="form-control">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-4">
+                    <span>Enter Your Name :</span>
+                    @Html.TextBoxFor(m => m.name, new { @id = "name", @class = "form-control", @required = "required" })
+                    <label>Choose Your Profiles :</label>
+                    <input  type="file" name="imgInp" value="imgInp" placeholder="Choose Your Files :" class="form-control"/> <br /> 
+                    <input type="submit" name="Command" id="btnSubmit" value="@ViewBag.buttonName" class="btn btn-success" />
+                    <input type="reset" name="Command" value="Reset"  class="btn btn-danger"/>
+                </div>
+
+            </div> <br /> 
+           <section>
+               <div class="row">
+                   <div class="col-sm-12">
+                       <table class="table table-bordered table-responsive">
+                           <thead>
+                               <tr>
+                                   <th>
+                                       Sr.No 
+                                   </th>
+                                   <th>
+                                       Name
+                                   </th>
+                                   <th>
+                                      Profiles 
+                                   </th>
+                                   <th>
+                                       Action 
+                                   </th>
+                               </tr>
+                           </thead>
+                           <tbody>
+                               
+                                 
+                                       @{var r = 1; }
+                                       @if (ViewBag.list != null)
+                                       {
+                                           foreach (var item in ViewBag.list)
+                                           {
+                                               <tr>
+                                                   <td>
+                                                       @(r++)
+                                                   </td>
+                                                   <td>
+                                                       @item.name
+                                                   </td>
+                                                   <th>
+                                                       <img src="@item.Imagepath" style="height:90px;width:100px;border:1px solid black" class="img img-responsive img-circle" alt="Alternate Text" />
+                                                   </th>
+                                                   <th>
+                                                       <a title='Update' onclick="location.href='@Url.Action("Update", "Home", new { Rid = @item.id })'">
+                                                           <span class="fa fa-edit btn-sm btn-info">Update</span> </a>
+                                                           <a title='Delete' onclick='Delete(@item.id)' href="#">
+                                                               <span class="fa fa-times btn-sm btn-danger">Delete</span>
+                                                           </a>
+                                                         </th>
+                                               </tr>
+                                           }
+                                       }
+                                   
+                               
+                           </tbody>
+                       </table>
+                   </div>
+
+               </div>
+            </section>
+
+
+        </div>
+
+    </section>
+}
+</main>
